@@ -1,0 +1,26 @@
+name: 'fal dbt Cloud action'
+description: 'Starts a dbt Cloud job specified by the job id.'
+branding:
+  icon: 'cloud-lightning'
+  color: 'orange'
+inputs:
+  dbt_cloud_token:  # token for dbt cloud api
+    description: 'DBT cloud api token'
+    required: true
+  dbt_cloud_account_id:  # account id
+    description: 'DBT cloud account id'
+    required: true
+  dbt_cloud_job_id:  # job id
+    description: 'DBT cloud job id'
+    required: true
+  cause:  # cause
+    description: 'Cause message to use'
+    required: true
+    default: 'Triggered from Github'
+  interval:  # interval
+    description: 'The interval between polls in seconds.'
+    required: false
+    default: '30'
+runs:
+  using: 'node12'
+  main: 'index.js'
