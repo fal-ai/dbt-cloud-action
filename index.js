@@ -1,6 +1,7 @@
 const axios = require('axios')
 const core = require('@actions/core');
 const github = require('@actions/github');
+const fs = require('fs');
 
 const run_status = {
   1: 'Queued',
@@ -51,10 +52,24 @@ function get_job_run(account_id, run_id) {
       reject(error);
     });
   });
-} 
+}
 
 
-async function executeAction () {
+async function get_artifacts(account_id, run_id) {
+  res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/artifacts/run_results.json`);
+  run_results = res.data;
+
+  const dir = './target';
+
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+
+  fs.writeFileSync(`${dir}/run_results.json`, JSON.stringify(run_results))
+}
+
+
+async function executeAction() {
 
   const account_id=core.getInput('dbt_cloud_account_id');
   const job_id=core.getInput('dbt_cloud_job_id');
@@ -83,6 +98,7 @@ async function executeAction () {
       }
 
       core.info(`job finished with '${status}'.`);
+      await get_artifacts(account_id, run_id)
       return `job finished with '${status}'.`;
     }
   }
