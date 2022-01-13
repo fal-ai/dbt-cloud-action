@@ -1,6 +1,7 @@
 const axios = require('axios')
 const core = require('@actions/core');
 const github = require('@actions/github');
+const { exec } = require("child_process");
 const fs = require('fs');
 
 const run_status = {
@@ -27,20 +28,20 @@ function sleep(ms) {
   });
 }
 
-async function run_job(account_id, job_id, cause) {
+async function runJob(account_id, job_id, cause) {
   res = await dbt_cloud_api.post(`/accounts/${account_id}/jobs/${job_id}/run/`, {
     cause: cause
   })
   return res.data
 }
 
-async function get_job_run(account_id, run_id) {
+async function getJobRun(account_id, run_id) {
   res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/`)
   return res.data
 }
 
 
-async function get_artifacts(account_id, run_id) {
+async function getArtifacts(account_id, run_id) {
   res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/artifacts/run_results.json`);
   run_results = res.data;
 
@@ -54,23 +55,41 @@ async function get_artifacts(account_id, run_id) {
 }
 
 
+function checkoutTargetBranch(runData) {
+  core.info(`Checking out ${runData['git_branch']} ${runData['git_sha']}`)
+  const command = `git checkout ${runData['git_branch']} ${runData['git_sha']}`
+  return new Promise((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        reject(`error: ${error.message}`)
+      }
+      if (stderr) {
+        reject(`error: ${stderr}`)
+      }
+      core.info(`stdout: ${stdout}`)
+      resolve();
+    });
+  })
+}
+
+
 async function executeAction() {
 
   const account_id=core.getInput('dbt_cloud_account_id');
   const job_id=core.getInput('dbt_cloud_job_id');
   const cause=core.getInput('message');
 
-  let res = await run_job(account_id, job_id, cause);
+  let res = await runJob(account_id, job_id, cause);
   let run_id = res.data.id;
   
   core.info(`Triggered job. ${res.data.href}`);
 
   while (true) {
     await sleep(core.getInput('interval') * 1000);
-    let res = await get_job_run(account_id, run_id);
+    let res = await getJobRun(account_id, run_id);
     let run = res.data;
 
-    core.info(`${run.id}` - `${run_status[run.status]}`);
+    core.info(`Run: ${run.id} - ${run_status[run.status]}`);
 
     if (run.finished_at) {
       core.info('job finished');
@@ -83,7 +102,8 @@ async function executeAction() {
       }
 
       core.info(`job finished with '${status}'.`);
-      await get_artifacts(account_id, run_id)
+      await checkoutTargetBranch(run)
+      await getArtifacts(account_id, run_id)
       return `job finished with '${status}'.`;
     }
   }
