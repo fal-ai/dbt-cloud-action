@@ -55,8 +55,8 @@ async function getArtifacts(account_id, run_id, run_data) {
 
   fs.writeFileSync(`${dir}/run_results.json`, JSON.stringify(run_results))
 
-  run_data = `DBT_GIT_BRANCH=${run_data['git_branch']}\nDBT_GIT_SHA=${run_data['git_sha']}`
-  fs.writeFileSync(`${dir}/run_data`, run_data)
+  core.setOutput("git_branch", run_data['git_branch'])
+  core.setOutput("git_sha", run_data['git_sha'])
 }
 
 
