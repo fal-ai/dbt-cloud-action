@@ -1,8 +1,5 @@
 name: 'fal dbt Cloud action'
 description: 'Starts a dbt Cloud job specified by the job id.'
-branding:
-  icon: 'cloud-lightning'
-  color: 'orange'
 inputs:
   dbt_cloud_token:  # token for dbt cloud api
     description: 'DBT cloud api token'
