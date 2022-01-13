@@ -42,9 +42,11 @@ async function getJobRun(account_id, run_id) {
 
 
 async function getArtifacts(account_id, run_id) {
+  core.info('Getting artifacts')
   res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/artifacts/run_results.json`);
   run_results = res.data;
 
+  core.info('Saving artifacts in target directory')
   const dir = './target';
 
   if (!fs.existsSync(dir)) {
@@ -66,6 +68,7 @@ function checkoutTargetBranch(runData) {
       if (stderr) {
         reject(`error: ${stderr}`)
       }
+      core.info('Done')
       resolve();
     });
   })
