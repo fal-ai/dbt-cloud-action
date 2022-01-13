@@ -16,7 +16,7 @@ const dbt_cloud_api = axios.create({
   baseURL: 'https://cloud.getdbt.com/api/v2/',
   timeout: 1000,
   headers: {
-    'Authorization': `Bearer ${core.getInput('dbt_cloud_token')}`,
+    'Authorization': `Token ${core.getInput('dbt_cloud_token')}`,
     'Content-Type': 'application/json'
   }
 });
