@@ -66,7 +66,6 @@ function checkoutTargetBranch(runData) {
       if (stderr) {
         reject(`error: ${stderr}`)
       }
-      core.info(`stdout: ${stdout}`)
       resolve();
     });
   })
