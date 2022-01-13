@@ -41,8 +41,8 @@ async function getJobRun(account_id, run_id) {
 }
 
 
-async function getArtifacts(account_id, run_id) {
-  core.info('Getting artifacts')
+
+async function getArtifacts(account_id, run_id, run_data) {
   res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/artifacts/run_results.json`);
   run_results = res.data;
 
@@ -54,24 +54,7 @@ async function getArtifacts(account_id, run_id) {
   }
 
   fs.writeFileSync(`${dir}/run_results.json`, JSON.stringify(run_results))
-}
-
-
-function checkoutTargetBranch(runData) {
-  core.info(`Checking out ${runData['git_branch']} ${runData['git_sha']}`)
-  const command = `git checkout ${runData['git_branch']} ${runData['git_sha']}`
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(`error: ${error.message}`)
-      }
-      if (stderr) {
-        reject(`error: ${stderr}`)
-      }
-      core.info('Done')
-      resolve();
-    });
-  })
+  fs.writeFileSync(`${dir}/run_data.json`, JSON.stringify(run_data))
 }
 
 
@@ -83,7 +66,7 @@ async function executeAction() {
 
   let res = await runJob(account_id, job_id, cause);
   let run_id = res.data.id;
-  
+
   core.info(`Triggered job. ${res.data.href}`);
 
   while (true) {
@@ -104,7 +87,6 @@ async function executeAction() {
       }
 
       core.info(`job finished with '${status}'.`);
-      await checkoutTargetBranch(run)
       await getArtifacts(account_id, run_id)
       return `job finished with '${status}'.`;
     }
