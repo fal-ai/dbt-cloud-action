@@ -27,31 +27,16 @@ function sleep(ms) {
   });
 }
 
-function run_job(account_id, job_id, cause) {
-
-  return new Promise((resolve, reject) => {
-    dbt_cloud_api.post(`/accounts/${account_id}/jobs/${job_id}/run/`, {
+async function run_job(account_id, job_id, cause) {
+  res = await dbt_cloud_api.post(`/accounts/${account_id}/jobs/${job_id}/run/`, {
     cause: cause
-    })
-    .then(res => {
-      resolve(res.data);
-    })
-    .catch(error => {
-      reject(error);
-    });
-  });
+  })
+  return res.data
 }
 
-function get_job_run(account_id, run_id) {
-  return new Promise((resolve, reject) => {
-    dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/`)
-    .then(res => {
-      resolve(res.data);
-    })
-    .catch(error => {
-      reject(error);
-    });
-  });
+async function get_job_run(account_id, run_id) {
+  res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/`)
+  return res.data
 }
 
 
@@ -104,9 +89,6 @@ async function executeAction() {
   }
 }
 
-
-
 executeAction().catch(e => {
   core.setFailed('There has been a problem with running your dbt cloud job: ' + e.message);
 });
-
