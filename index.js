@@ -42,7 +42,7 @@ async function getJobRun(account_id, run_id) {
 
 
 
-async function getArtifacts(account_id, run_id, run_data) {
+async function getArtifacts(account_id, run_id) {
   res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/artifacts/run_results.json`);
   run_results = res.data;
 
@@ -54,9 +54,6 @@ async function getArtifacts(account_id, run_id, run_data) {
   }
 
   fs.writeFileSync(`${dir}/run_results.json`, JSON.stringify(run_results))
-
-  core.setOutput("git_branch", run_data['git_branch'])
-  core.setOutput("git_sha", run_data['git_sha'])
 }
 
 
@@ -89,7 +86,10 @@ async function executeAction() {
       }
 
       core.info(`job finished with '${status}'.`);
-      await getArtifacts(account_id, run_id, run)
+      await getArtifacts(account_id, run_id)
+
+      core.setOutput("git_branch", run['git_branch']);
+      core.setOutput("git_sha", run['git_sha']);
       return `job finished with '${status}'.`;
     }
   }
