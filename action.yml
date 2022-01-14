@@ -1,21 +1,24 @@
 name: 'fal dbt Cloud action'
-description: 'Starts a dbt Cloud job specified by the job id.'
+description: 'Runs a dbt Cloud job specified by job id'
+branding:
+  icon: 'codesandbox'
+  color: 'gray-dark'
 inputs:
-  dbt_cloud_token:  # token for dbt cloud api
-    description: 'DBT cloud api token'
+  dbt_cloud_token:
+    description: 'dbt Cloud api token'
     required: true
-  dbt_cloud_account_id:  # account id
-    description: 'DBT cloud account id'
+  dbt_cloud_account_id:
+    description: 'dbt Cloud account id'
     required: true
-  dbt_cloud_job_id:  # job id
-    description: 'DBT cloud job id'
+  dbt_cloud_job_id:
+    description: 'dbt Cloud job id'
     required: true
-  cause:  # cause
-    description: 'Cause message to use'
+  cause:
+    description: 'Job trigger cause'
     required: true
-    default: 'Triggered from Github'
-  interval:  # interval
-    description: 'The interval between polls in seconds.'
+    default: 'Triggered by a GitHub Action'
+  interval:
+    description: 'Interval between polls in seconds'
     required: false
     default: '30'
 outputs:
