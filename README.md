@@ -1,6 +1,6 @@
 # Fal dbt Cloud action
 
-This action manages a job run on [dbt Cloud](https://cloud.getdbt.com), gets job artifacts and outputs git data for the successful job run.
+This action manages a job run on [dbt Cloud](https://cloud.getdbt.com) and fetches job artifacts.
 
 ### Inputs
   **Required**:
