@@ -1,4 +1,4 @@
-const axios = require('axios')
+const axios = require('axios');
 const core = require('@actions/core');
 const yaml = require('js-yaml');
 const { exec } = require("child_process");
@@ -32,12 +32,12 @@ async function runJob(account_id, job_id, cause) {
   res = await dbt_cloud_api.post(`/accounts/${account_id}/jobs/${job_id}/run/`, {
     cause: cause
   })
-  return res.data
+  return res.data;
 }
 
 async function getJobRun(account_id, run_id) {
-  res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/`)
-  return res.data
+  res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/`);
+  return res.data;
 }
 
 async function getArtifacts(account_id, run_id) {
@@ -51,7 +51,7 @@ async function getArtifacts(account_id, run_id) {
     fs.mkdirSync(dir);
   }
 
-  fs.writeFileSync(`${dir}/run_results.json`, JSON.stringify(run_results))
+  fs.writeFileSync(`${dir}/run_results.json`, JSON.stringify(run_results));
 }
 
 
@@ -86,42 +86,44 @@ async function executeAction() {
       core.info(`job finished with '${status}'.`);
       await getArtifacts(account_id, run_id);
 
-      return run['git_sha']
+      return run['git_sha'];
     }
   }
 }
 
 function checkoutTargetBranch(git_sha) {
-  core.info(`Checking out ${git_sha}`)
-  const command = `git -c advice.detachedHead=false checkout ${git_sha}`
+  core.info(`Checking out ${git_sha}`);
+  const command = `git -c advice.detachedHead=false checkout ${git_sha}`;
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
       if (error) {
-        reject(`error: ${error.message}`)
+        reject(`error: ${error.message}`);
       }
       if (stderr) {
-        core.info(stderr)
+        core.info(stderr);
       }
-      core.info('Done')
+      core.info('Done');
       resolve();
     });
   })
 }
 
 function setupProfiles() {
-  fs.writeFileSync('keyfile.json', core.getInput('keyfile'), 'utf8')
+  core.info('Setting up profiles.yml');
+  fs.writeFileSync('keyfile.json', core.getInput('keyfile'), 'utf8');
 
-  profileName = core.getInput('profile_name')
-  outputName = core.getInput('output_name')
-  profiles = yaml.load(core.getInput('profiles'))
+  profileName = core.getInput('profile_name');
+  outputName = core.getInput('output_name');
+  profiles = yaml.load(core.getInput('profiles'));
 
-  profiles[profileName].outputs[outputName].keyfile = 'keyfile.json'
-  profilesYml = yaml.dump(profiles)
+  profiles[profileName].outputs[outputName].keyfile = 'keyfile.json';
+  profilesYml = yaml.dump(profiles);
 
-  fs.writeFileSync('profiles.yml', profilesYml, 'utf8')
+  fs.writeFileSync('profiles.yml', profilesYml, 'utf8');
+  core.info('Done');
 }
 
-setupProfiles()
+setupProfiles();
 
 executeAction()
   .then(git_sha => checkoutTargetBranch(git_sha))
