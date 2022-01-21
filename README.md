@@ -7,14 +7,11 @@ This action manages a job run on [dbt Cloud](https://cloud.getdbt.com), gets job
   - `dbt_cloud_token` - dbt Cloud [api token](https://docs.getdbt.com/docs/dbt-cloud/dbt-cloud-api/user-tokens)
   - `dbt_cloud_account_id` - dbt Cloud account id
   - `dbt_cloud_job_id` - dbt Cloud job id
+  - `profiles` - contents of a [profiles.yml](https://docs.getdbt.com/reference/profiles.yml/) as a string
 
   **Optional**:
   - `cause` - Cause message to use. [Default=`"Triggered by a GitHub Action"`]
   - `interval` - The interval between polls in seconds. [Default=`30`]
-
-### Outputs
-    - `git_branch` - git branch name for the successful job run
-    - `git_sha` - git commit SHA for the successful job run
 
 ### Example usage
 ```yaml
@@ -24,4 +21,5 @@ This action manages a job run on [dbt Cloud](https://cloud.getdbt.com), gets job
       dbt_cloud_token: ${{ secrets.DBT_CLOUD_API_TOKEN }}
       dbt_cloud_account_id: ${{ secrets.DBT_ACCOUNT_ID }}
       dbt_cloud_job_id: ${{ secrets.DBT_JOB_ID }}
+      profiles: ${{ secrets.PROFILES_YML }}
 ```

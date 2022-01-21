@@ -110,6 +110,8 @@ function checkoutTargetBranch(git_sha) {
   })
 }
 
+fs.writeFileSync('profiles.yml', core.getInput('profiles'), 'utf8')
+
 executeAction()
   .then(git_sha => checkoutTargetBranch(git_sha))
   .catch(e => {
