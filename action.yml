@@ -21,11 +21,6 @@ inputs:
     description: 'Interval between polls in seconds'
     required: false
     default: '30'
-outputs:
-  git_branch:
-    description: 'git branch name for dbt run'
-  git_sha:
-    description: 'git commit sha for dbt run'
 runs:
   using: 'node12'
   main: 'index.js'
