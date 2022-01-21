@@ -114,7 +114,7 @@ function setupProfiles() {
 
   profileName = core.getInput('profile_name');
   outputName = core.getInput('output_name');
-  profiles = yaml.load(core.getInput('profiles'));
+  profiles = yaml.load(core.getInput('dbt_profiles'));
 
   profiles[profileName].outputs[outputName].keyfile = 'keyfile.json';
   profilesYml = yaml.dump(profiles);

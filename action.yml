@@ -16,7 +16,7 @@ inputs:
   keyfile:
     description: 'Data warehouse keyfile'
     required: true
-  profiles:
+  dbt_profiles:
     description: 'contents of a profiles.yml as a string'
     required: true
   profile_name:
