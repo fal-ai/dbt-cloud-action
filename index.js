@@ -100,7 +100,7 @@ function checkoutTargetBranch(git_sha) {
         reject(`error: ${error.message}`)
       }
       if (stderr) {
-        reject(`error: ${stderr}`)
+        core.info(stderr)
       }
       core.info('Done')
       resolve();
