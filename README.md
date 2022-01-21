@@ -8,10 +8,13 @@ This action manages a job run on [dbt Cloud](https://cloud.getdbt.com), gets job
   - `dbt_cloud_account_id` - dbt Cloud account id
   - `dbt_cloud_job_id` - dbt Cloud job id
   - `profiles` - contents of a [profiles.yml](https://docs.getdbt.com/reference/profiles.yml/) as a string
+  - `keyfile` - Contents of a data warehouse keyfile
 
   **Optional**:
-  - `cause` - Cause message to use. [Default=`"Triggered by a GitHub Action"`]
-  - `interval` - The interval between polls in seconds. [Default=`30`]
+  - `cause` - Cause message to use [Default=`"Triggered by a GitHub Action"`]
+  - `interval` - The interval between polls in seconds [Default=`30`]
+  - `profile_name` - Name of target profile [Default=`default`]
+  - `output_name` - Profile output [Default=`dev`]
 
 ### Example usage
 ```yaml

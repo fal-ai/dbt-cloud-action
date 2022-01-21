@@ -1,6 +1,6 @@
 const axios = require('axios')
 const core = require('@actions/core');
-const github = require('@actions/github');
+const yaml = require('js-yaml');
 const { exec } = require("child_process");
 const fs = require('fs');
 
@@ -39,8 +39,6 @@ async function getJobRun(account_id, run_id) {
   res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/`)
   return res.data
 }
-
-
 
 async function getArtifacts(account_id, run_id) {
   res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/artifacts/run_results.json`);
@@ -110,7 +108,20 @@ function checkoutTargetBranch(git_sha) {
   })
 }
 
-fs.writeFileSync('profiles.yml', core.getInput('profiles'), 'utf8')
+function setupProfiles() {
+  fs.writeFileSync('keyfile.json', core.getInput('keyfile'), 'utf8')
+
+  profileName = core.getInput('profile_name')
+  outputName = core.getInput('output_name')
+  profiles = yaml.load(core.getInput('profiles'))
+
+  profiles[profileName].outputs[outputName].keyfile = 'keyfile.json'
+  profilesYml = yaml.dump(profiles)
+
+  fs.writeFileSync('profiles.yml', profilesYml, 'utf8')
+}
+
+setupProfiles()
 
 executeAction()
   .then(git_sha => checkoutTargetBranch(git_sha))

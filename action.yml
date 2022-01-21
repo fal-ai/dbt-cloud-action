@@ -16,6 +16,14 @@ inputs:
   profiles:
     description: 'contents of a profiles.yml as a string'
     required: true
+  profile_name:
+    description: 'Name of target profile'
+    required: true
+    default: 'default'
+  output_name:
+    description: 'Profile output'
+    required: true
+    default: 'dev'
   cause:
     description: 'Job trigger cause'
     required: true
