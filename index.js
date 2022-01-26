@@ -110,15 +110,8 @@ function checkoutTargetBranch(git_sha) {
 
 function setupProfiles() {
   core.info('Setting up profiles.yml');
-  fs.writeFileSync('keyfile.json', core.getInput('keyfile'), 'utf8');
-
-  profileName = core.getInput('profile_name');
-  outputName = core.getInput('output_name');
   profiles = yaml.load(core.getInput('dbt_profiles'));
-
-  profiles[profileName].outputs[outputName].keyfile = 'keyfile.json';
   profilesYml = yaml.dump(profiles);
-
   fs.writeFileSync('profiles.yml', profilesYml, 'utf8');
   core.info('Done');
 }

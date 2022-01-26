@@ -1,40 +1,32 @@
-name: 'fal dbt Cloud action'
-description: 'Runs a dbt Cloud job specified by job id'
+name: "fal dbt Cloud action"
+description: "Runs a dbt Cloud job specified by job id"
 branding:
-  icon: 'codesandbox'
-  color: 'gray-dark'
+  icon: "codesandbox"
+  color: "gray-dark"
 inputs:
   dbt_cloud_token:
-    description: 'dbt Cloud api token'
+    description: "dbt Cloud api token"
     required: true
   dbt_cloud_account_id:
-    description: 'dbt Cloud account id'
+    description: "dbt Cloud account id"
     required: true
   dbt_cloud_job_id:
-    description: 'dbt Cloud job id'
+    description: "dbt Cloud job id"
     required: true
   keyfile:
-    description: 'Data warehouse keyfile'
+    description: "Data warehouse keyfile"
     required: true
   dbt_profiles:
-    description: 'contents of a profiles.yml as a string'
+    description: "contents of a profiles.yml as a string"
     required: true
-  profile_name:
-    description: 'Name of target profile'
-    required: true
-    default: 'default'
-  output_name:
-    description: 'Profile output'
-    required: true
-    default: 'dev'
   cause:
-    description: 'Job trigger cause'
+    description: "Job trigger cause"
     required: true
-    default: 'Triggered by a GitHub Action'
+    default: "Triggered by a GitHub Action"
   interval:
-    description: 'Interval between polls in seconds'
+    description: "Interval between polls in seconds"
     required: false
-    default: '30'
+    default: "30"
 runs:
-  using: 'node12'
-  main: 'index.js'
+  using: "node12"
+  main: "index.js"
