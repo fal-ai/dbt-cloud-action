@@ -1,4 +1,4 @@
-name: "fal dbt Cloud action"
+name: "dbt Cloud action"
 description: "Runs a dbt Cloud job specified by job id"
 branding:
   icon: "cloud"
