@@ -13,9 +13,6 @@ inputs:
   dbt_cloud_job_id:
     description: "dbt Cloud job id"
     required: true
-  keyfile:
-    description: "Data warehouse keyfile"
-    required: true
   dbt_profiles:
     description: "contents of a profiles.yml as a string"
     required: true
