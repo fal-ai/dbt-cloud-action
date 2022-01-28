@@ -108,16 +108,6 @@ function checkoutTargetBranch(git_sha) {
   })
 }
 
-function setupProfiles() {
-  core.info('Setting up profiles.yml');
-  profiles = yaml.load(core.getInput('dbt_profiles'));
-  profilesYml = yaml.dump(profiles);
-  fs.writeFileSync('profiles.yml', profilesYml, 'utf8');
-  core.info('Done');
-}
-
-setupProfiles();
-
 executeAction()
   .then(git_sha => checkoutTargetBranch(git_sha))
   .catch(e => {

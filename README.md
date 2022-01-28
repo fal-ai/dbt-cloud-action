@@ -7,7 +7,6 @@ This action lets you trigger a job run on [dbt Cloud](https://cloud.getdbt.com),
   - `dbt_cloud_token` - dbt Cloud [api token](https://docs.getdbt.com/docs/dbt-cloud/dbt-cloud-api/user-tokens)
   - `dbt_cloud_account_id` - dbt Cloud account id
   - `dbt_cloud_job_id` - dbt Cloud job id
-  - `dbt_profiles` - contents of a [profiles.yml](https://docs.getdbt.com/reference/profiles.yml/) as a string. (Please inline the keyfile [as seen in the example](https://docs.getdbt.com/reference/warehouse-profiles/bigquery-profile#service-account-json).)
 
 We recommend passing sensitive variables as Github secrets. Example [here](https://github.com/fal-ai/fal_bike_example/blob/main/.github/workflows/fal_dbt.yml).
 
@@ -23,5 +22,4 @@ We recommend passing sensitive variables as Github secrets. Example [here](https
       dbt_cloud_token: ${{ secrets.DBT_CLOUD_API_TOKEN }}
       dbt_cloud_account_id: ${{ secrets.DBT_ACCOUNT_ID }}
       dbt_cloud_job_id: ${{ secrets.DBT_JOB_ID }}
-      dbt_profiles: ${{ secrets.PROFILES_YML }}
 ```
