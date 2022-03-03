@@ -59,7 +59,7 @@ async function executeAction() {
 
   const account_id=core.getInput('dbt_cloud_account_id');
   const job_id=core.getInput('dbt_cloud_job_id');
-  const cause=core.getInput('message');
+  const cause=core.getInput('cause');
 
   let res = await runJob(account_id, job_id, cause);
   let run_id = res.data.id;
