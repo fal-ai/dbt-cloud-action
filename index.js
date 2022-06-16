@@ -30,7 +30,8 @@ function sleep(ms) {
 
 async function runJob(account_id, job_id, cause) {
   res = await dbt_cloud_api.post(`/accounts/${account_id}/jobs/${job_id}/run/`, {
-    cause: cause
+    cause: cause,
+    steps_override: steps_override
   })
   return res.data;
 }
@@ -60,8 +61,9 @@ async function executeAction() {
   const account_id=core.getInput('dbt_cloud_account_id');
   const job_id=core.getInput('dbt_cloud_job_id');
   const cause=core.getInput('cause');
+  const steps_override=core.getInput('steps_override');
 
-  let res = await runJob(account_id, job_id, cause);
+  let res = await runJob(account_id, job_id, cause, steps_override);
   let run_id = res.data.id;
 
   core.info(`Triggered job. ${res.data.href}`);
