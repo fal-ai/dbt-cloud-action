@@ -17,6 +17,9 @@ inputs:
     description: "Job trigger cause"
     required: true
     default: "Triggered by a GitHub Action"
+  steps_override:
+    description: "List of steps to override the jobs default steps"
+    required: false
   interval:
     description: "Interval between polls in seconds"
     required: false

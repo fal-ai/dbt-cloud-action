@@ -13,6 +13,7 @@ We recommend passing sensitive variables as Github secrets. Example [here](https
   **Optional**:
   - `cause` - Cause message to use [Default=`"Triggered by a GitHub Action"`]
   - `interval` - The interval between polls in seconds [Default=`30`]
+  - `steps_override` — A list of steps to override the defaults for the job
 
 ### Example usage
 ```yaml
