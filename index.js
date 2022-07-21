@@ -57,9 +57,9 @@ async function getArtifacts(account_id, run_id) {
 
 async function executeAction() {
 
-  const account_id=core.getInput('dbt_cloud_account_id');
-  const job_id=core.getInput('dbt_cloud_job_id');
-  const cause=core.getInput('cause');
+  const account_id = core.getInput('dbt_cloud_account_id');
+  const job_id = core.getInput('dbt_cloud_job_id');
+  const cause = core.getInput('cause');
 
   let res = await runJob(account_id, job_id, cause);
   let run_id = res.data.id;
@@ -96,12 +96,18 @@ function checkoutTargetBranch(git_sha) {
   const command = `git -c advice.detachedHead=false checkout ${git_sha}`;
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(`error: ${error.message}`);
-      }
       if (stderr) {
-        core.info(stderr);
+        core.info(`STDERR: ${stderr}`);
       }
+      if (stdout) {
+        core.info(`STDOUT: ${stdout}`);
+      }
+
+      if (error) {
+        // Return to avoid reject and resolve in same Promise
+        return reject(error);
+      }
+
       core.info('Done');
       resolve();
     });
@@ -111,5 +117,5 @@ function checkoutTargetBranch(git_sha) {
 executeAction()
   .then(git_sha => checkoutTargetBranch(git_sha))
   .catch(e => {
-    core.setFailed('There has been a problem with running your dbt cloud job: ' + e.message);
+    core.setFailed('There has been a problem with running your dbt cloud job: ' + e.toString());
   });
