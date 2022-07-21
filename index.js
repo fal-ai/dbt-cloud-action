@@ -91,31 +91,16 @@ async function executeAction() {
   }
 }
 
-function checkoutTargetBranch(git_sha) {
-  core.info(`Checking out ${git_sha}`);
-  const command = `git -c advice.detachedHead=false checkout ${git_sha}`;
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (stderr) {
-        core.info(`STDERR: ${stderr}`);
-      }
-      if (stdout) {
-        core.info(`STDOUT: ${stdout}`);
-      }
+async function main() {
+  try {
+    const git_sha = await executeAction();
 
-      if (error) {
-        // Return to avoid reject and resolve in same Promise
-        return reject(error);
-      }
-
-      core.info('Done');
-      resolve();
-    });
-  })
+    // GitHub Action output
+    core.info(`dbt Cloud Job commit SHA is ${git_sha}`)
+    core.setOutput('git_sha', git_sha);
+  } catch (e) {
+    core.setFailed('There has been a problem with running your dbt cloud job:\n' + e.toString());
+  }
 }
 
-executeAction()
-  .then(git_sha => checkoutTargetBranch(git_sha))
-  .catch(e => {
-    core.setFailed('There has been a problem with running your dbt cloud job: ' + e.toString());
-  });
+main();
