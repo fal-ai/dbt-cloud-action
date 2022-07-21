@@ -9,10 +9,10 @@ This action lets you trigger a job run on [dbt Cloud](https://cloud.getdbt.com),
 - `dbt_cloud_account_id` - dbt Cloud Account ID
 - `dbt_cloud_job_id` - dbt Cloud Job ID
 
-
 ### Optional
-- `cause` - Cause message to use [Default=`"Triggered by a GitHub Action"`]
-- `interval` - The interval between polls in seconds [Default=`30`]
+- `cause` - Cause message to use (Default=`"Triggered by a GitHub Action"`)
+- `git_sha` - The git SHA to execute dbt Cloud Job
+- `interval` - The interval between polls in seconds (Default=`30`)
 
 We recommend passing sensitive variables as GitHub secrets. [Example usage](https://github.com/fal-ai/fal_bike_example/blob/main/.github/workflows/fal_dbt.yml).
 
