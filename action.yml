@@ -1,17 +1,17 @@
 name: "dbt Cloud action"
-description: "Runs a dbt Cloud job specified by job id"
+description: "Runs a dbt Cloud Job specified by Job ID"
 branding:
   icon: "cloud"
   color: "orange"
 inputs:
   dbt_cloud_token:
-    description: "dbt Cloud api token"
+    description: "dbt Cloud API token"
     required: true
   dbt_cloud_account_id:
-    description: "dbt Cloud account id"
+    description: "dbt Cloud account ID"
     required: true
   dbt_cloud_job_id:
-    description: "dbt Cloud job id"
+    description: "dbt Cloud Job ID"
     required: true
   cause:
     description: "Job trigger cause"
@@ -21,6 +21,9 @@ inputs:
     description: "Interval between polls in seconds"
     required: false
     default: "30"
+outputs:
+  git_sha:
+    description: "Repository SHA in which dbt Cloud Job ran"
 runs:
   using: "node12"
   main: "index.js"
