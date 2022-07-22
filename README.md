@@ -11,7 +11,7 @@ This action lets you trigger a job run on [dbt Cloud](https://cloud.getdbt.com),
 
 ### Optional
 - `cause` - Cause message to use (Default=`"Triggered by a GitHub Action"`)
-- `git_sha` - The git SHA to execute dbt Cloud Job
+- `git_sha` - The git SHA (e.g. commit) to checkout before running dbt Cloud Job. This refers to the state your repository is when running. ([dbt API docs](https://docs.getdbt.com/dbt-cloud/api-v2#tag/Jobs/operation/triggerRun))
 - `interval` - The interval between polls in seconds (Default=`30`)
 
 We recommend passing sensitive variables as GitHub secrets. [Example usage](https://github.com/fal-ai/fal_bike_example/blob/main/.github/workflows/fal_dbt.yml).
