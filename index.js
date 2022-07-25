@@ -28,21 +28,25 @@ function sleep(ms) {
   });
 }
 
-async function runJob(account_id, job_id, cause) {
-  res = await dbt_cloud_api.post(`/accounts/${account_id}/jobs/${job_id}/run/`, {
-    cause: cause
-  })
+async function runJob(account_id, job_id, cause, git_sha) {
+  let body = { cause: cause }
+
+  if (git_sha) {
+    body['git_sha'] = git_sha
+  }
+
+  let res = await dbt_cloud_api.post(`/accounts/${account_id}/jobs/${job_id}/run/`, body)
   return res.data;
 }
 
 async function getJobRun(account_id, run_id) {
-  res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/`);
+  let res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/`);
   return res.data;
 }
 
 async function getArtifacts(account_id, run_id) {
-  res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/artifacts/run_results.json`);
-  run_results = res.data;
+  let res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/artifacts/run_results.json`);
+  let run_results = res.data;
 
   core.info('Saving artifacts in target directory')
   const dir = './target';
@@ -60,8 +64,9 @@ async function executeAction() {
   const account_id = core.getInput('dbt_cloud_account_id');
   const job_id = core.getInput('dbt_cloud_job_id');
   const cause = core.getInput('cause');
+  const git_sha = core.getInput('git_sha') || null;
 
-  let res = await runJob(account_id, job_id, cause);
+  let res = await runJob(account_id, job_id, cause, git_sha);
   let run_id = res.data.id;
 
   core.info(`Triggered job. ${res.data.href}`);

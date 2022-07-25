@@ -17,6 +17,9 @@ inputs:
     description: "Job trigger cause"
     required: true
     default: "Triggered by a GitHub Action"
+  git_sha:
+    description: "The git SHA to execute dbt Cloud Job"
+    required: false
   interval:
     description: "Interval between polls in seconds"
     required: false
