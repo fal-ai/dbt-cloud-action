@@ -1,7 +1,5 @@
 const axios = require('axios');
 const core = require('@actions/core');
-const yaml = require('js-yaml');
-const { exec } = require("child_process");
 const fs = require('fs');
 
 const run_status = {
