@@ -51,8 +51,14 @@ async function getJobRun(account_id, run_id) {
   try {
     let res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/`);
     return res.data;
-  } catch {
-    console.error("Error getting job information");
+  } catch (e) {
+    let errorMsg = e.toString()
+    if (errorMsg.search("timeout of ") != -1 && errorMsg.search(" exceeded") != -1) {
+      // Special case for axios timeout
+      errorMsg += ". The dbt Cloud API is taking too long to respond."
+    }
+
+    console.error("Error getting job information from dbt Cloud. " + errorMsg);
   }
 }
 
