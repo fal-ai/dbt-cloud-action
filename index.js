@@ -1,6 +1,16 @@
 const axios = require('axios');
 const core = require('@actions/core');
 const fs = require('fs');
+const axiosRetry = require('axios-retry');
+
+axiosRetry(axios, {
+  retryDelay: (retryCount) => retryCount * 1000,
+  retries: 3,
+  shouldResetTimeout: true,
+  onRetry: (retryCount, error, requestConfig) => {
+    console.error("Error in request. Retrying...")
+  }
+});
 
 const run_status = {
   1: 'Queued',
@@ -13,7 +23,7 @@ const run_status = {
 
 const dbt_cloud_api = axios.create({
   baseURL: 'https://cloud.getdbt.com/api/v2/',
-  timeout: 1000,
+  timeout: 5000, // 5 seconds
   headers: {
     'Authorization': `Token ${core.getInput('dbt_cloud_token')}`,
     'Content-Type': 'application/json'
@@ -38,8 +48,18 @@ async function runJob(account_id, job_id, cause, git_sha) {
 }
 
 async function getJobRun(account_id, run_id) {
-  let res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/`);
-  return res.data;
+  try {
+    let res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/`);
+    return res.data;
+  } catch (e) {
+    let errorMsg = e.toString()
+    if (errorMsg.search("timeout of ") != -1 && errorMsg.search(" exceeded") != -1) {
+      // Special case for axios timeout
+      errorMsg += ". The dbt Cloud API is taking too long to respond."
+    }
+
+    console.error("Error getting job information from dbt Cloud. " + errorMsg);
+  }
 }
 
 async function getArtifacts(account_id, run_id) {
@@ -72,6 +92,11 @@ async function executeAction() {
   while (true) {
     await sleep(core.getInput('interval') * 1000);
     let res = await getJobRun(account_id, run_id);
+    if (!res) {
+      // Restart loop if there is no response
+      continue;
+    }
+
     let run = res.data;
 
     core.info(`Run: ${run.id} - ${run_status[run.status]}`);
