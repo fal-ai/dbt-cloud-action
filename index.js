@@ -127,7 +127,7 @@ async function executeAction() {
 
   await getArtifacts(account_id, runId);
 
-  return jobRun.data['git_sha'];
+  return res.data['git_sha'];
 }
 
 async function main() {
