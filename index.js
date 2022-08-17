@@ -49,7 +49,7 @@ async function runJob(account_id, job_id, cause, git_sha) {
 
 async function getJobRun(account_id, run_id) {
   try {
-    let res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/`);
+    let res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/?include_related=["run_steps"]`);
     return res.data;
   } catch (e) {
     let errorMsg = e.toString()
@@ -84,39 +84,50 @@ async function executeAction() {
   const cause = core.getInput('cause');
   const git_sha = core.getInput('git_sha') || null;
 
-  let res = await runJob(account_id, job_id, cause, git_sha);
-  let run_id = res.data.id;
+  const jobRun = await runJob(account_id, job_id, cause, git_sha);
+  const runId = jobRun.data.id;
 
-  core.info(`Triggered job. ${res.data.href}`);
+  core.info(`Triggered job. ${jobRun.data.href}`);
 
+  let res;
   while (true) {
     await sleep(core.getInput('interval') * 1000);
-    let res = await getJobRun(account_id, run_id);
+    res = await getJobRun(account_id, runId);
+
     if (!res) {
-      // Restart loop if there is no response
+      // Retry if there is no response
       continue;
     }
 
-    let run = res.data;
+    let status = run_status[res.data.status];
+    core.info(`Run: ${res.data.id} - ${status}`);
 
-    core.info(`Run: ${run.id} - ${run_status[run.status]}`);
-
-    if (run.finished_at) {
-      core.info('job finished');
-
-      let status = run_status[run.status];
-
-      if (status != 'Success') {
-        core.setFailed(`job finished with '${status}'.`);
-        return;
-      }
-
-      core.info(`job finished with '${status}'.`);
-      await getArtifacts(account_id, run_id);
-
-      return run['git_sha'];
+    if (res.data.is_complete) {
+      core.info(`job finished with '${status}'`);
+      break;
     }
   }
+
+  if (res.data.is_error) {
+    core.setFailed();
+  }
+
+  if (res.data.is_error) {
+    // Wait for the step information to load in run
+    core.info("Loading logs...")
+    await sleep(5000);
+    res = await getJobRun(account_id, runId);
+    // Print logs
+    for (let step of res.data.run_steps) {
+      core.info("# " + step.name)
+      core.info(step.logs)
+      core.info("\n************\n")
+    }
+  }
+
+  await getArtifacts(account_id, runId);
+
+  return res.data['git_sha'];
 }
 
 async function main() {
