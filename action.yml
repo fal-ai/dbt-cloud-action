@@ -20,7 +20,7 @@ inputs:
   schema_override:
     description: "Override the destination schema in the configured target for this job."
     required: false
-    default: "dbt_cloud_pr" 
+    default: "dbt_cloud_pr_123" 
   target_name_override: 
      description: "Override the target.name context variable used when running this job"
      required: false
