@@ -17,6 +17,14 @@ inputs:
     description: "Job trigger cause"
     required: true
     default: "Triggered by a GitHub Action"
+  schema_override:
+    description: "Override the destination schema in the configured target for this job."
+    required: false
+    default: "dbt_cloud_pr" 
+  target_name_override: 
+     description: "Override the target.name context variable used when running this job"
+     required: false
+     default: "staging"
   git_sha:
     description: "The git SHA to execute dbt Cloud Job"
     required: false
