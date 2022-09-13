@@ -36,11 +36,19 @@ function sleep(ms) {
   });
 }
 
-async function runJob(account_id, job_id, cause, git_sha) {
+async function runJob(account_id, job_id, cause, git_sha, schema_override, target_name_override) {
   let body = { cause: cause }
 
   if (git_sha) {
     body['git_sha'] = git_sha
+  }
+
+  if (schema_override) {
+    body['schema_override'] = schema_override
+  }
+
+  if (target_name_override) {
+    body['target_name_override'] = target_name_override
   }
 
   let res = await dbt_cloud_api.post(`/accounts/${account_id}/jobs/${job_id}/run/`, body)
@@ -82,9 +90,11 @@ async function executeAction() {
   const account_id = core.getInput('dbt_cloud_account_id');
   const job_id = core.getInput('dbt_cloud_job_id');
   const cause = core.getInput('cause');
+  const schema_override = core.getInput('schema_override');
+  const target_name_override = core.getInput('target_name_override');
   const git_sha = core.getInput('git_sha') || null;
 
-  const jobRun = await runJob(account_id, job_id, cause, git_sha);
+  const jobRun = await runJob(account_id, job_id, cause, git_sha, schema_override, target_name_override);
   const runId = jobRun.data.id;
 
   core.info(`Triggered job. ${jobRun.data.href}`);
