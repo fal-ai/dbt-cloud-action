@@ -17,6 +17,12 @@ inputs:
     description: "Job trigger cause"
     required: true
     default: "Triggered by a GitHub Action"
+  git_sha:
+    description: "The git SHA to execute dbt Cloud Job"
+    required: false
+  git_branch:
+     description: "The git branch to check out before running this job"
+     required: false
   schema_override:
     description: "Override the destination schema in the configured target for this job."
     required: false
@@ -24,10 +30,6 @@ inputs:
   target_name_override: 
      description: "Override the target.name context variable used when running this job"
      required: false
-     default: "staging"
-  git_sha:
-    description: "The git SHA to execute dbt Cloud Job"
-    required: false
   interval:
     description: "Interval between polls in seconds"
     required: false
