@@ -8,6 +8,7 @@ This action lets you trigger a job run on [dbt Cloud](https://cloud.getdbt.com),
 - `dbt_cloud_token` - dbt Cloud [API token](https://docs.getdbt.com/docs/dbt-cloud/dbt-cloud-api/service-tokens)
 - `dbt_cloud_account_id` - dbt Cloud Account ID
 - `dbt_cloud_job_id` - dbt Cloud Job ID
+- `failure_on_error` - Boolean to make the action report a failure when dbt-cloud runs. Mark this as `false` to run fal after the dbt-cloud job.
 
 ### Optional
 - `cause` - Cause message to use (Default=`"Triggered by a GitHub Action"`)
@@ -33,6 +34,7 @@ jobs:
           dbt_cloud_token: ${{ secrets.DBT_CLOUD_API_TOKEN }}
           dbt_cloud_account_id: ${{ secrets.DBT_CLOUD_ACCOUNT_ID }}
           dbt_cloud_job_id: ${{ secrets.DBT_CLOUD_JOB_ID }}
+          failure_on_error: true
 ```
 
 ### Use with [fal](https://github.com/fal-ai/fal)
@@ -62,6 +64,7 @@ jobs:
           dbt_cloud_token: ${{ secrets.DBT_CLOUD_API_TOKEN }}
           dbt_cloud_account_id: ${{ secrets.DBT_ACCOUNT_ID }}
           dbt_cloud_job_id: ${{ secrets.DBT_CLOUD_JOB_ID }}
+          failure_on_error: false
 
       - name: Setup profiles.yml
         shell: python
@@ -83,11 +86,10 @@ jobs:
           python-version: "3.9.x"
 
       - name: Install dependencies
-        # Normally would install a `requirements.txt`.
-        # This is to make it visible.
+        # Normally would use a `requirements.txt`.
         run: |
           pip install dbt-bigquery
-          pip install fal
+          pip install fal[bigquery]
 
       - name: Run fal scripts
         env:
