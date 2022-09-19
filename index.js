@@ -2,8 +2,6 @@ const axios = require('axios');
 const core = require('@actions/core');
 const fs = require('fs');
 const axiosRetry = require('axios-retry');
-const isNil = require('lodash.isnil')
-const omitBy = require('lodash.omitby')
 
 axiosRetry(axios, {
   retryDelay: (retryCount) => retryCount * 1000,
@@ -38,11 +36,39 @@ function sleep(ms) {
   });
 }
 
-async function runJob(account_id, job_id, cause, overrides) {
-  // NOTE: overrides['cause'] has priority over `cause` var
-  let body = { cause, ...overrides }
+const OPTIONAL_KEYS = [
+  'git_sha',
+  'git_branch',
+  'schema_override',
+  'dbt_version_override',
+  'threads_override',
+  'target_name_override',
+  'generate_docs_override',
+  'timeout_seconds_override',
+];
 
-  body = omitBy(body, isNil);
+const BOOL_OPTIONAL_KEYS = [ 'generate_docs_override' ];
+const INTEGER_OPTIONAL_KEYS = [ 'threads_override', 'timeout_seconds_override' ];
+
+async function runJob(account_id, job_id) {
+  const cause = core.getInput('cause');
+
+  const body = { cause };
+
+  for (const key of OPTIONAL_KEYS) {
+    let input = core.getInput(key);
+
+    if (input != '' && BOOL_OPTIONAL_KEYS.includes(key)) {
+      input = core.getBooleanInput(key);
+    } else if (input != '' && INTEGER_OPTIONAL_KEYS.includes(key)) {
+      input = parseInt(input);
+    }
+
+    // Type-checking equality becuase of boolean inputs
+    if (input !== '') {
+      body[key] = input;
+    }
+  }
 
   core.debug(`Run job body:\n${JSON.stringify(body, null, 2)}`)
 
@@ -84,16 +110,8 @@ async function executeAction() {
   const account_id = core.getInput('dbt_cloud_account_id');
   const job_id = core.getInput('dbt_cloud_job_id');
   const failure_on_error = core.getBooleanInput('failure_on_error');
-  const cause = core.getInput('cause');
-  const run_body = core.getInput('run_body') || {};
 
-  // TODO: `git_sha` deprecated, can be removed later.
-  const git_sha = core.getInput('git_sha') || null;
-  if (git_sha) {
-    run_body['git_sha'] = git_sha
-  }
-
-  const jobRun = await runJob(account_id, job_id, cause, run_body);
+  const jobRun = await runJob(account_id, job_id);
   const runId = jobRun.data.id;
 
   core.info(`Triggered job. ${jobRun.data.href}`);

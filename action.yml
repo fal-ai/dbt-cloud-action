@@ -5,16 +5,16 @@ branding:
   color: "orange"
 inputs:
   dbt_cloud_token:
-    description: "dbt Cloud API token"
+    description: dbt Cloud API token
     required: true
   dbt_cloud_account_id:
-    description: "dbt Cloud account ID"
+    description: dbt Cloud account ID
     required: true
   dbt_cloud_job_id:
-    description: "dbt Cloud Job ID"
+    description: dbt Cloud Job ID
     required: true
   interval:
-    description: "Interval between polls in seconds"
+    description: Interval between polls in seconds
     required: false
     default: "30"
   failure_on_error:
@@ -22,17 +22,43 @@ inputs:
     required: true
 
   cause:
-    description: "Job trigger cause"
+    description: Job trigger cause
     required: true
-    default: "Triggered by a GitHub Action"
-  run_body:
-    description: "dictionary with properties to send to dbt Cloud in Job creation request"
-    required: false
+    default: Triggered by a GitHub Action
 
   git_sha:
-    description: "The git SHA to execute dbt Cloud Job"
+    description: The git sha to check out before running this job
     required: false
-    deprecationMessage: "Deprecated in favor of full body setting: run_body"
+
+  git_branch:
+    description: The git branch to check out before running this job
+    required: false
+
+  schema_override:
+    description: Override the destination schema in the configured target for this job.
+    required: false
+
+  dbt_version_override:
+    description: Override the version of dbt used to run this job
+    required: false
+
+  threads_override:
+    description: Override the number of threads used to run this job
+    required: false
+
+  target_name_override:
+    description: Override the target.name context variable used when running this job
+    required: false
+
+  generate_docs_override:
+    description: Override whether or not this job generates docs (true=yes, false=no)
+    required: false
+    # type: boolean
+
+  timeout_seconds_override:
+    description: Override the timeout in seconds for this job
+    required: false
+    # type: integer
 
 outputs:
   git_sha:
