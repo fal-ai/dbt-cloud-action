@@ -13,20 +13,27 @@ inputs:
   dbt_cloud_job_id:
     description: "dbt Cloud Job ID"
     required: true
-  cause:
-    description: "Job trigger cause"
-    required: true
-    default: "Triggered by a GitHub Action"
-  failure_on_error:
-    description: Boolean to make the action report a failure when dbt-cloud runs. Mark this as `false` to run fal after the dbt-cloud job.
-    required: true
-  git_sha:
-    description: "The git SHA to execute dbt Cloud Job"
-    required: false
   interval:
     description: "Interval between polls in seconds"
     required: false
     default: "30"
+  failure_on_error:
+    description: Boolean to make the action report a failure when dbt-cloud runs. Mark this as `false` to run fal after the dbt-cloud job.
+    required: true
+
+  cause:
+    description: "Job trigger cause"
+    required: true
+    default: "Triggered by a GitHub Action"
+  run_body:
+    description: "dictionary with properties to send to dbt Cloud in Job creation request"
+    required: false
+
+  git_sha:
+    description: "The git SHA to execute dbt Cloud Job"
+    required: false
+    deprecationMessage: "Deprecated in favor of full body setting: run_body"
+
 outputs:
   git_sha:
     description: "Repository SHA in which dbt Cloud Job ran"

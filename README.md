@@ -12,6 +12,7 @@ This action lets you trigger a job run on [dbt Cloud](https://cloud.getdbt.com),
 
 ### Optional
 - `cause` - Cause message to use (Default=`"Triggered by a GitHub Action"`)
+- `run_body` - Dictionary with properties to send to dbt Cloud in Job creation request. Check the [API docs for details](https://docs.getdbt.com/dbt-cloud/api-v2#tag/Jobs/operation/triggerRun).
 - `git_sha` - The git SHA (e.g. commit) to checkout before running dbt Cloud Job. This refers to the state your repository is when running. ([dbt API docs](https://docs.getdbt.com/dbt-cloud/api-v2#tag/Jobs/operation/triggerRun))
 - `interval` - The interval between polls in seconds (Default=`30`)
 
