@@ -4,19 +4,32 @@ This action lets you trigger a job run on [dbt Cloud](https://cloud.getdbt.com),
 
 ## Inputs
 
-### Required
+### Credentials
+
 - `dbt_cloud_token` - dbt Cloud [API token](https://docs.getdbt.com/docs/dbt-cloud/dbt-cloud-api/service-tokens)
 - `dbt_cloud_account_id` - dbt Cloud Account ID
 - `dbt_cloud_job_id` - dbt Cloud Job ID
-- `failure_on_error` - Boolean to make the action report a failure when dbt-cloud runs. Mark this as `false` to run fal after the dbt-cloud job.
-
-### Optional
-- `cause` - Cause message to use (Default=`"Triggered by a GitHub Action"`)
-- `run_body` - Dictionary with properties to send to dbt Cloud in Job creation request. Check the [API docs for details](https://docs.getdbt.com/dbt-cloud/api-v2#tag/Jobs/operation/triggerRun).
-- `git_sha` - The git SHA (e.g. commit) to checkout before running dbt Cloud Job. This refers to the state your repository is when running. ([dbt API docs](https://docs.getdbt.com/dbt-cloud/api-v2#tag/Jobs/operation/triggerRun))
-- `interval` - The interval between polls in seconds (Default=`30`)
 
 We recommend passing sensitive variables as GitHub secrets. [Example usage](https://github.com/fal-ai/fal_bike_example/blob/main/.github/workflows/fal_dbt.yml).
+
+### Action configuration
+
+- `failure_on_error` - Boolean to make the action report a failure when dbt-cloud runs. Mark this as `false` to run fal after the dbt-cloud job.
+- `interval` - The interval between polls in seconds (Default: `30`)
+
+### dbt Cloud Job configuration
+
+Use any of the [documented options for the dbt API](https://docs.getdbt.com/dbt-cloud/api-v2#tag/Jobs/operation/triggerRun).
+
+- `cause` (Default: `Triggered by a Github Action`)
+- `git_sha`
+- `git_branch`
+- `schema_override`
+- `dbt_version_override`
+- `threads_override`
+- `target_name_override`
+- `generate_docs_override`
+- `timeout_seconds_override`
 
 ## Create your workflow
 ```yaml
