@@ -141,6 +141,7 @@ async function main() {
   } catch (e) {
     // Always fail in this case because it is not a dbt error
     core.setFailed('There has been a problem with running your dbt cloud job:\n' + e.toString());
+    core.debug(e.stack)
   }
 }
 
