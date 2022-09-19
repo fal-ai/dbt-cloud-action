@@ -2,6 +2,8 @@ const axios = require('axios');
 const core = require('@actions/core');
 const fs = require('fs');
 const axiosRetry = require('axios-retry');
+const isNil = require('lodash.isnil')
+const omitBy = require('lodash.omitby')
 
 axiosRetry(axios, {
   retryDelay: (retryCount) => retryCount * 1000,
@@ -36,12 +38,13 @@ function sleep(ms) {
   });
 }
 
-async function runJob(account_id, job_id, cause, git_sha) {
-  let body = { cause: cause }
+async function runJob(account_id, job_id, cause, overrides) {
+  // NOTE: overrides['cause'] has priority over `cause` var
+  let body = { cause, ...overrides }
 
-  if (git_sha) {
-    body['git_sha'] = git_sha
-  }
+  body = omitBy(body, isNil);
+
+  core.debug(`Run job body:\n${JSON.stringify(body, null, 2)}`)
 
   let res = await dbt_cloud_api.post(`/accounts/${account_id}/jobs/${job_id}/run/`, body)
   return res.data;
@@ -78,14 +81,19 @@ async function getArtifacts(account_id, run_id) {
 
 
 async function executeAction() {
-
   const account_id = core.getInput('dbt_cloud_account_id');
   const job_id = core.getInput('dbt_cloud_job_id');
-  const cause = core.getInput('cause');
-  const git_sha = core.getInput('git_sha') || null;
   const failure_on_error = core.getBooleanInput('failure_on_error');
+  const cause = core.getInput('cause');
+  const run_body = core.getInput('run_body') || {};
 
-  const jobRun = await runJob(account_id, job_id, cause, git_sha);
+  // TODO: `git_sha` deprecated, can be removed later.
+  const git_sha = core.getInput('git_sha') || null;
+  if (git_sha) {
+    run_body['git_sha'] = git_sha
+  }
+
+  const jobRun = await runJob(account_id, job_id, cause, run_body);
   const runId = jobRun.data.id;
 
   core.info(`Triggered job. ${jobRun.data.href}`);
