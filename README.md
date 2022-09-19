@@ -100,3 +100,15 @@ jobs:
           fal run --profiles-dir .
 
 ```
+
+#### Getting the correct artifacts from dbt-cloud
+
+fal relies on the generated artifacts from a dbt run step to get model statuses. dbt-cloud only makes these artifacts available after the **last** step finished running.
+
+In order to get the status information that you need for fal, make sure to run the step you are interested in **last**.
+
+For example, this dbt job will provide the `run_results.json` of `dbt docs generate`, which is probably not what you want fal to report about:
+
+![Example run](./example-run.png)
+
+So, you would make `dbt docs generate` run before `dbt run` and leave `dbt run` as the last step.
