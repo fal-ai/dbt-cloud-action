@@ -17,6 +17,9 @@ inputs:
     description: "Job trigger cause"
     required: true
     default: "Triggered by a GitHub Action"
+  failure_on_error:
+    description: Boolean to make the action report a failure when dbt-cloud runs. Mark this as `false` to run fal after the dbt-cloud job.
+    required: true
   git_sha:
     description: "The git SHA to execute dbt Cloud Job"
     required: false

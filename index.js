@@ -83,6 +83,7 @@ async function executeAction() {
   const job_id = core.getInput('dbt_cloud_job_id');
   const cause = core.getInput('cause');
   const git_sha = core.getInput('git_sha') || null;
+  const failure_on_error = core.getBooleanInput('failure_on_error');
 
   const jobRun = await runJob(account_id, job_id, cause, git_sha);
   const runId = jobRun.data.id;
@@ -108,7 +109,7 @@ async function executeAction() {
     }
   }
 
-  if (res.data.is_error) {
+  if (res.data.is_error && failure_on_error) {
     core.setFailed();
   }
 
@@ -138,6 +139,7 @@ async function main() {
     core.info(`dbt Cloud Job commit SHA is ${git_sha}`)
     core.setOutput('git_sha', git_sha);
   } catch (e) {
+    // Always fail in this case because it is not a dbt error
     core.setFailed('There has been a problem with running your dbt cloud job:\n' + e.toString());
   }
 }
