@@ -2,6 +2,7 @@ const axios = require('axios');
 const core = require('@actions/core');
 const fs = require('fs');
 const axiosRetry = require('axios-retry');
+const YAML = require('yaml')
 
 axiosRetry(axios, {
   retryDelay: (retryCount) => retryCount * 1000,
@@ -36,12 +37,54 @@ function sleep(ms) {
   });
 }
 
-async function runJob(account_id, job_id, cause, git_sha) {
-  let body = { cause: cause }
+const OPTIONAL_KEYS = [
+  'git_sha',
+  'git_branch',
+  'schema_override',
+  'dbt_version_override',
+  'threads_override',
+  'target_name_override',
+  'generate_docs_override',
+  'timeout_seconds_override',
+  'steps_override',
+];
 
-  if (git_sha) {
-    body['git_sha'] = git_sha
+const BOOL_OPTIONAL_KEYS = [ 'generate_docs_override' ];
+const INTEGER_OPTIONAL_KEYS = [ 'threads_override', 'timeout_seconds_override' ];
+const YAML_PARSE_OPTIONAL_KEYS = [ 'steps_override' ];
+
+async function runJob(account_id, job_id) {
+  const cause = core.getInput('cause');
+
+  const body = { cause };
+
+  for (const key of OPTIONAL_KEYS) {
+    let input = core.getInput(key);
+
+    if (input != '' && BOOL_OPTIONAL_KEYS.includes(key)) {
+      input = core.getBooleanInput(key);
+    } else if (input != '' && INTEGER_OPTIONAL_KEYS.includes(key)) {
+      input = parseInt(input);
+    } else if (input != '' && YAML_PARSE_OPTIONAL_KEYS.includes(key)) {
+      core.debug(input);
+      try {
+        input = YAML.parse(input);
+        if (typeof input == 'string') {
+          input = [ input ];
+        }
+      } catch (e) {
+        core.setFailed(`Could not interpret ${key} correctly. Pass valid YAML in a string.\n Example:\n  property: '["a string", "another string"]'`);
+        throw e;
+      }
+    }
+
+    // Type-checking equality becuase of boolean inputs
+    if (input !== '') {
+      body[key] = input;
+    }
   }
+
+  core.debug(`Run job body:\n${JSON.stringify(body, null, 2)}`)
 
   let res = await dbt_cloud_api.post(`/accounts/${account_id}/jobs/${job_id}/run/`, body)
   return res.data;
@@ -78,14 +121,11 @@ async function getArtifacts(account_id, run_id) {
 
 
 async function executeAction() {
-
   const account_id = core.getInput('dbt_cloud_account_id');
   const job_id = core.getInput('dbt_cloud_job_id');
-  const cause = core.getInput('cause');
-  const git_sha = core.getInput('git_sha') || null;
   const failure_on_error = core.getBooleanInput('failure_on_error');
 
-  const jobRun = await runJob(account_id, job_id, cause, git_sha);
+  const jobRun = await runJob(account_id, job_id);
   const runId = jobRun.data.id;
 
   core.info(`Triggered job. ${jobRun.data.href}`);
@@ -141,6 +181,7 @@ async function main() {
   } catch (e) {
     // Always fail in this case because it is not a dbt error
     core.setFailed('There has been a problem with running your dbt cloud job:\n' + e.toString());
+    core.debug(e.stack)
   }
 }
 

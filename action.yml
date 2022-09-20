@@ -5,31 +5,69 @@ branding:
   color: "orange"
 inputs:
   dbt_cloud_token:
-    description: "dbt Cloud API token"
+    description: dbt Cloud API token
     required: true
   dbt_cloud_account_id:
-    description: "dbt Cloud account ID"
+    description: dbt Cloud account ID
     required: true
   dbt_cloud_job_id:
-    description: "dbt Cloud Job ID"
+    description: dbt Cloud Job ID
     required: true
-  cause:
-    description: "Job trigger cause"
-    required: true
-    default: "Triggered by a GitHub Action"
+  interval:
+    description: Interval between polls in seconds
+    required: false
+    default: "30"
   failure_on_error:
     description: Boolean to make the action report a failure when dbt-cloud runs. Mark this as `false` to run fal after the dbt-cloud job.
     required: true
+
+  cause:
+    description: Job trigger cause
+    required: true
+    default: Triggered by a GitHub Action
+
   git_sha:
-    description: "The git SHA to execute dbt Cloud Job"
+    description: The git sha to check out before running this job
     required: false
-  interval:
-    description: "Interval between polls in seconds"
+
+  git_branch:
+    description: The git branch to check out before running this job
     required: false
-    default: "30"
+
+  schema_override:
+    description: Override the destination schema in the configured target for this job.
+    required: false
+
+  dbt_version_override:
+    description: Override the version of dbt used to run this job
+    required: false
+
+  threads_override:
+    description: Override the number of threads used to run this job
+    required: false
+
+  target_name_override:
+    description: Override the target.name context variable used when running this job
+    required: false
+
+  generate_docs_override:
+    description: Override whether or not this job generates docs (true=yes, false=no)
+    required: false
+    # type: boolean
+
+  timeout_seconds_override:
+    description: Override the timeout in seconds for this job
+    required: false
+    # type: integer
+
+  steps_override:
+    description: Override the list of steps for this job. Pass a yaml list enclosed in a string and it will be parsed and sent as a list.
+    required: false
+    # type: array of strings
+
 outputs:
   git_sha:
     description: "Repository SHA in which dbt Cloud Job ran"
 runs:
-  using: "node12"
+  using: node16
   main: "index.js"
