@@ -2,6 +2,8 @@
 
 This action lets you trigger a job run on [dbt Cloud](https://cloud.getdbt.com), fetches the `run_results.json` artifact, and `git checkout`s the branch that was ran by dbt Cloud.
 
+Example usage at [fal-ai/fal_bike_example](https://github.com/fal-ai/fal_bike_example)
+
 ## Inputs
 
 ### Credentials
@@ -30,7 +32,7 @@ Use any of the [documented options for the dbt API](https://docs.getdbt.com/dbt-
 - `target_name_override`
 - `generate_docs_override`
 - `timeout_seconds_override`
-- `steps_override`
+- `steps_override`: pass a YAML-parseable string.
 
 ## Create your workflow
 ```yaml
@@ -50,6 +52,9 @@ jobs:
           dbt_cloud_account_id: ${{ secrets.DBT_CLOUD_ACCOUNT_ID }}
           dbt_cloud_job_id: ${{ secrets.DBT_CLOUD_JOB_ID }}
           failure_on_error: true
+          steps_override: |
+            - dbt seed
+            - dbt run
 ```
 
 ### Use with [fal](https://github.com/fal-ai/fal)
