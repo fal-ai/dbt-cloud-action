@@ -30,6 +30,7 @@ Use any of the [documented options for the dbt API](https://docs.getdbt.com/dbt-
 - `target_name_override`
 - `generate_docs_override`
 - `timeout_seconds_override`
+- `steps_override`
 
 ## Create your workflow
 ```yaml

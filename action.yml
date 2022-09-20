@@ -60,6 +60,11 @@ inputs:
     required: false
     # type: integer
 
+  steps_override:
+    description: Override the list of steps for this job. Pass a yaml list enclosed in a string and it will be parsed and sent as a list.
+    required: false
+    # type: array of strings
+
 outputs:
   git_sha:
     description: "Repository SHA in which dbt Cloud Job ran"

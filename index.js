@@ -2,6 +2,7 @@ const axios = require('axios');
 const core = require('@actions/core');
 const fs = require('fs');
 const axiosRetry = require('axios-retry');
+const YAML = require('yaml')
 
 axiosRetry(axios, {
   retryDelay: (retryCount) => retryCount * 1000,
@@ -45,10 +46,12 @@ const OPTIONAL_KEYS = [
   'target_name_override',
   'generate_docs_override',
   'timeout_seconds_override',
+  'steps_override',
 ];
 
 const BOOL_OPTIONAL_KEYS = [ 'generate_docs_override' ];
 const INTEGER_OPTIONAL_KEYS = [ 'threads_override', 'timeout_seconds_override' ];
+const YAML_PARSE_OPTIONAL_KEYS = [ 'steps_override' ];
 
 async function runJob(account_id, job_id) {
   const cause = core.getInput('cause');
@@ -62,6 +65,17 @@ async function runJob(account_id, job_id) {
       input = core.getBooleanInput(key);
     } else if (input != '' && INTEGER_OPTIONAL_KEYS.includes(key)) {
       input = parseInt(input);
+    } else if (input != '' && YAML_PARSE_OPTIONAL_KEYS.includes(key)) {
+      core.debug(input);
+      try {
+        input = YAML.parse(input);
+        if (typeof input == 'string') {
+          input = [ input ];
+        }
+      } catch (e) {
+        core.setFailed(`Could not interpret ${key} correctly. Pass valid YAML in a string.\n Example:\n  property: '["a string", "another string"]'`);
+        throw e;
+      }
     }
 
     // Type-checking equality becuase of boolean inputs
