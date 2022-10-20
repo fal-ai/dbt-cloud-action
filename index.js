@@ -168,16 +168,24 @@ async function executeAction() {
 
   await getArtifacts(account_id, runId);
 
-  return res.data['git_sha'];
+  const outputs = {
+    "git_sha": res.data['git_sha'],
+    "run_id": runId
+  };
+
+  return outputs;
 }
 
 async function main() {
   try {
-    const git_sha = await executeAction();
+    const outputs = await executeAction();
+    const git_sha = outputs["git_sha"];
+    const run_id = outputs["run_id"];
 
     // GitHub Action output
     core.info(`dbt Cloud Job commit SHA is ${git_sha}`)
     core.setOutput('git_sha', git_sha);
+    core.setOutput('run_id', run_id);
   } catch (e) {
     // Always fail in this case because it is not a dbt error
     core.setFailed('There has been a problem with running your dbt cloud job:\n' + e.toString());
