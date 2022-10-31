@@ -68,6 +68,8 @@ inputs:
 outputs:
   git_sha:
     description: "Repository SHA in which dbt Cloud Job ran"
+  run_id:
+    description: "Run ID of the dbt Cloud Job that was triggered"
 runs:
   using: node16
   main: "index.js"
