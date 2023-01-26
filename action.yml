@@ -20,6 +20,10 @@ inputs:
   failure_on_error:
     description: Boolean to make the action report a failure when dbt-cloud runs. Mark this as `false` to run fal after the dbt-cloud job.
     required: true
+  get_artifacts:
+    description: Whether run results, needed by fal, are fetched from dbt cloud. If using this action in other contexts this can be set to `false`, useful for jobs which do not generate artifacts.
+    required: false
+    default: true
 
   cause:
     description: Job trigger cause
