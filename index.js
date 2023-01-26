@@ -166,7 +166,9 @@ async function executeAction() {
     }
   }
 
-  await getArtifacts(account_id, runId);
+  if (core.getBooleanInput('get_artifacts')) {
+    await getArtifacts(account_id, runId);
+  }
 
   const outputs = {
     "git_sha": res.data['git_sha'],
