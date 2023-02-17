@@ -70,7 +70,7 @@ inputs:
     # type: array of strings
 
   wait_for_job:
-    description: 
+    description: Boolean for whether action should wait until dbt job finishes
     required: false
     default: true
 
