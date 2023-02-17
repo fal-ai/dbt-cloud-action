@@ -143,8 +143,13 @@ async function executeAction() {
     let status = run_status[res.data.status];
     core.info(`Run: ${res.data.id} - ${status}`);
 
-    if (res.data.is_complete) {
-      core.info(`job finished with '${status}'`);
+    if (core.getBooleanInput('wait_for_job')) {
+      if (res.data.is_complete) {
+        core.info(`job finished with '${status}'`);
+        break;
+      }
+    } else {
+      core.info("Not waiting for job to finish. Relevant run logs will be omitted.")
       break;
     }
   }
