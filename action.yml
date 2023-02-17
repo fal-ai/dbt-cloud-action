@@ -69,6 +69,12 @@ inputs:
     required: false
     # type: array of strings
 
+  wait_for_job:
+    description: Boolean for whether action should wait until dbt job finishes
+    required: false
+    default: true
+
+
 outputs:
   git_sha:
     description: "Repository SHA in which dbt Cloud Job ran"
