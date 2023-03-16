@@ -49,9 +49,9 @@ const OPTIONAL_KEYS = [
   'steps_override',
 ];
 
-const BOOL_OPTIONAL_KEYS = [ 'generate_docs_override' ];
-const INTEGER_OPTIONAL_KEYS = [ 'threads_override', 'timeout_seconds_override' ];
-const YAML_PARSE_OPTIONAL_KEYS = [ 'steps_override' ];
+const BOOL_OPTIONAL_KEYS = ['generate_docs_override'];
+const INTEGER_OPTIONAL_KEYS = ['threads_override', 'timeout_seconds_override'];
+const YAML_PARSE_OPTIONAL_KEYS = ['steps_override'];
 
 async function runJob(account_id, job_id) {
   const cause = core.getInput('cause');
@@ -70,7 +70,7 @@ async function runJob(account_id, job_id) {
       try {
         input = YAML.parse(input);
         if (typeof input == 'string') {
-          input = [ input ];
+          input = [input];
         }
       } catch (e) {
         core.setFailed(`Could not interpret ${key} correctly. Pass valid YAML in a string.\n Example:\n  property: '["a string", "another string"]'`);
@@ -106,17 +106,21 @@ async function getJobRun(account_id, run_id) {
 }
 
 async function getArtifacts(account_id, run_id) {
-  let res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/artifacts/run_results.json`);
-  let run_results = res.data;
-
-  core.info('Saving artifacts in target directory')
   const dir = './target';
 
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
 
-  fs.writeFileSync(`${dir}/run_results.json`, JSON.stringify(run_results));
+  // TODO: parameterize
+  artifact_names = ["run_results.json", "manifest.json"]
+
+  for (let artifact_name of artifact_names) {
+    let res = await dbt_cloud_api.get(`/accounts/${account_id}/runs/${run_id}/artifacts/${artifact_name}`);
+    let run_results = res.data;
+    core.info(`Saving ${artifact_name} in target directory`)
+    fs.writeFileSync(`${dir}/${artifact_name}`, JSON.stringify(run_results));
+  }
 }
 
 
