@@ -8,7 +8,7 @@ Example usage at [fal-ai/fal_bike_example](https://github.com/fal-ai/fal_bike_ex
 
 ### Credentials
 
-- `dbt_cloud_url` - dbt Cloud [API URL](https://docs.getdbt.com/dbt-cloud/api-v2#/) (Default: `cloud.getdbt.com`)
+- `dbt_cloud_url` - dbt Cloud [API URL](https://docs.getdbt.com/dbt-cloud/api-v2#/) (Default: `https://cloud.getdbt.com`)
 - `dbt_cloud_token` - dbt Cloud [API token](https://docs.getdbt.com/docs/dbt-cloud/dbt-cloud-api/service-tokens)
 - `dbt_cloud_account_id` - dbt Cloud Account ID
 - `dbt_cloud_job_id` - dbt Cloud Job ID
