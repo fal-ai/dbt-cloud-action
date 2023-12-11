@@ -4,6 +4,10 @@ branding:
   icon: "cloud"
   color: "orange"
 inputs:
+  dbt_cloud_url:
+    description: dbt Cloud base API URL
+    required: false
+    default: https://cloud.getdbt.com
   dbt_cloud_token:
     description: dbt Cloud API token
     required: true
